@@ -3,6 +3,7 @@
 <head>
     <script>
         let globalId = 1;
+        let todoState = [];
 
         function markDone(id){
             const parent = document.getElementById(id);
@@ -31,26 +32,29 @@
             return child;
         }
 
-
-        function updateState(newTodos) {
+        function updateTodo(newtodo){
             const parent = document.getElementById("todos");
             parent.innerHTML = "";
-            for (let i = 0; i < newTodos.length; i++) {
-                const title = newTodos[i].title;
-                const description = newTodos[i].description;
-                parent.appendChild(createChild(title, description, globalId++));
+            for(let i=0;i<newtodo.length;i++){
+               const title = newtodo[i].title;
+                const description = newtodo[i].description;
+                parent.appendChild(createTodoElement(title, description, newtodo[i].globalId));
             }
+
         }
 
-        function addTodo() {
+        function addTodo(){
             const title = document.getElementById("title").value;
             const description = document.getElementById("description").value;
+
             todoState.push({
                 title: title,
-                description: description,
-                id: globalId++,
+                description: description,  
+                globalId: globalId++       
             })
-            updateState(todoState);
+            updateTodo(todoState);
+            /* const parent = document.getElementById("todos");
+            parent.appendChild(createTodoElement(title, description,globalId++)); */
         }
 
     </script>
