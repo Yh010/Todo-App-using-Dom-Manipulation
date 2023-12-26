@@ -1,0 +1,7 @@
+.history
+package.json
+package-lock.json
+node_modules
+.eslintrc.cjs
+vite.config.js
+```
