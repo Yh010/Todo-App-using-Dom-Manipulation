@@ -28,10 +28,10 @@
             //maxid of oldtodo
             const added = [];
             let maxidOld = oldTodo[0].id;
-            for(let i=0;i<oldTodo.length;i++){
-                 if(oldTodo[i].id> maxidOld){
-                     maxidOld =oldTodo[i].id;
-                 }
+            for (let i = 0; i < oldTodo.length; i++) {
+                if (oldTodo[i].id > maxidOld) {
+                    maxidOld = oldTodo[i].id;
+                }
             }
             let maxidNew = newTodos[0].id;
             for (let i = 0; i < newTodos.length; i++) {
@@ -39,9 +39,9 @@
                     maxidNew = newTodos[i].id;
                 }
             }
-            if(maxidNew>maxidOld){
-                for(let i=0;i<newTodos.length;i++){
-                    if(newTodos[i].id>maxidOld){
+            if (maxidNew > maxidOld) {
+                for (let i = 0; i < newTodos.length; i++) {
+                    if (newTodos[i].id > maxidOld) {
                         added.push(newTodos[i]);
                     }
                 }
@@ -51,15 +51,15 @@
             // 2. deleted
             //from id = 1 to max(oldtodo id) => if id not in newtodo => deleted
             const deleted = [];
-            for(let i=1;i<=maxidOld;i++){
-                let flag =0;
-                for(let j=0;j<newTodos.length;j++){
-                    if(i==newTodos[j].id){
-                        flag=1;
+            for (let i = 1; i <= maxidOld; i++) {
+                let flag = 0;
+                for (let j = 0; j < newTodos.length; j++) {
+                    if (i == newTodos[j].id) {
+                        flag = 1;
                         break;
                     }
                 }
-                if(flag==0){
+                if (flag == 0) {
                     deleted.push(i);
                 }
             }
@@ -69,31 +69,31 @@
             // 3. updated
             //go through each todo in oldtodo => if todo.id in newtodo => check if title, description, completed are same => if not => updated
             const updated = [];
-            for(let i=0;i<oldTodo.length;i++){
-                for(let j=0;j<newTodos.length;j++){
-                    if(oldTodo[i].id==newTodos[j].id){
-                        if(oldTodo[i].title!=newTodos[j].title || oldTodo[i].description!=newTodos[j].description || oldTodo[i].completed!=newTodos[j].completed){
+            for (let i = 0; i < oldTodo.length; i++) {
+                for (let j = 0; j < newTodos.length; j++) {
+                    if (oldTodo[i].id == newTodos[j].id) {
+                        if (oldTodo[i].title != newTodos[j].title || oldTodo[i].description != newTodos[j].description || oldTodo[i].completed != newTodos[j].completed) {
                             updated.push(newTodos[j]);
                         }
                     }
                 }
-            }      
-            
+            }
+
             // calculate these 3 arrays
             // call addTodo, removeTodo, updateTodo functions on each of the
             // elements
 
             //addTodo:
-            for(let i=0;i<added.length;i++){
+            for (let i = 0; i < added.length; i++) {
                 addTodo(added[i]);
             }
             //removeTodo:
-            for(let i=0;i<deleted.length;i++){
+            for (let i = 0; i < deleted.length; i++) {
                 removeTodo(deleted[i]);
             }
 
             //updateTodo:
-            for(let i=0;i<updated.length;i++){
+            for (let i = 0; i < updated.length; i++) {
                 updateTodo(updated[i]);
             }
 
