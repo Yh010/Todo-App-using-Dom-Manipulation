@@ -32,13 +32,25 @@
         }
 
 
+        function updateState(newTodos) {
+            const parent = document.getElementById("todos");
+            parent.innerHTML = "";
+            for (let i = 0; i < newTodos.length; i++) {
+                const title = newTodos[i].title;
+                const description = newTodos[i].description;
+                parent.appendChild(createChild(title, description, globalId++));
+            }
+        }
 
-        function addTodo(){
+        function addTodo() {
             const title = document.getElementById("title").value;
             const description = document.getElementById("description").value;
-
-            const parent = document.getElementById("todos");
-            parent.appendChild(createTodoElement(title, description,globalId++));
+            todoState.push({
+                title: title,
+                description: description,
+                id: globalId++,
+            })
+            updateState(todoState);
         }
 
     </script>
