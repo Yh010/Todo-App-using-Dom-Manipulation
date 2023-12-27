@@ -7,97 +7,77 @@
         let todoState = [];
         let oldTodoState = [];
 
-        function removeTodo(todo) {
-            const element = document.getElementById(todo.id);
-            element.parent.removeChild(element);
+        function addTodoElement(todo) {
+            const todoList = document.getElementById("todos");
+            const todoDiv = document.createElement("div");
+            todoDiv.id = todo.id;
+
+            const titlePara = document.createElement("p");
+            titlePara.innerHTML = todo.title;
+
+            const descriptionPara = document.createElement("p");
+            descriptionPara.innerHTML = todo.description;
+
+            const markDoneButton = document.createElement("button");
+            markDoneButton.textContent = todo.completed ? "Mark as undone" : "Mark as done";
+            markDoneButton.onclick = function () {
+                todo.completed = !todo.completed;
+                updateState(todoState);
+            };
+
+            const deleteButton = document.createElement("button");
+            deleteButton.textContent = "Delete";
+            deleteButton.onclick = function () {
+                removeTodoElement(todo);
+            };
+
+            todoDiv.appendChild(titlePara);
+            todoDiv.appendChild(descriptionPara);
+            todoDiv.appendChild(markDoneButton);
+            todoDiv.appendChild(deleteButton);
+
+            todoList.appendChild(todoDiv);
         }
 
-        function updateTodo(oldTodo, newTodo) {
+        function removeTodoElement(todo) {
+            const element = document.getElementById(todo.id);
+            element.parentNode.removeChild(element);
+        }
+
+        function updateTodoElement(oldTodo, newTodo) {
             const element = document.getElementById(oldTodo.id);
             element.children[0].innerHTML = newTodo.title;
             element.children[1].innerHTML = newTodo.description;
-            element.children[0].innerHTML = newTodo.completed ? "Mark as done" : "Done";
+            element.children[2].innerHTML = newTodo.completed ? "Mark as undone" : "Mark as done";
         }
 
         function updateState(newTodos) {
-            // calculate the diff b/w newTodos and oldTodos.
-            // More specifically, find out what todos are - 
-
-            // 1. added
-            //oldtodo=> get max id , newtodo=> get max id => if newtodo id > oldtodo id => some todos are added=> get the ids in newtodos > max(oldtodo id)
-            //maxid of oldtodo
             const added = [];
-            let maxidOld = oldTodo[0].id;
-            for (let i = 0; i < oldTodo.length; i++) {
-                if (oldTodo[i].id > maxidOld) {
-                    maxidOld = oldTodo[i].id;
-                }
-            }
-            let maxidNew = newTodos[0].id;
-            for (let i = 0; i < newTodos.length; i++) {
-                if (newTodos[i].id > maxidNew) {
-                    maxidNew = newTodos[i].id;
-                }
-            }
-            if (maxidNew > maxidOld) {
-                for (let i = 0; i < newTodos.length; i++) {
-                    if (newTodos[i].id > maxidOld) {
-                        added.push(newTodos[i]);
-                    }
-                }
-            }
-
-
-            // 2. deleted
-            //from id = 1 to max(oldtodo id) => if id not in newtodo => deleted
             const deleted = [];
-            for (let i = 1; i <= maxidOld; i++) {
-                let flag = 0;
-                for (let j = 0; j < newTodos.length; j++) {
-                    if (i == newTodos[j].id) {
-                        flag = 1;
-                        break;
-                    }
-                }
-                if (flag == 0) {
-                    deleted.push(i);
-                }
-            }
-
-
-
-            // 3. updated
-            //go through each todo in oldtodo => if todo.id in newtodo => check if title, description, completed are same => if not => updated
             const updated = [];
-            for (let i = 0; i < oldTodo.length; i++) {
-                for (let j = 0; j < newTodos.length; j++) {
-                    if (oldTodo[i].id == newTodos[j].id) {
-                        if (oldTodo[i].title != newTodos[j].title || oldTodo[i].description != newTodos[j].description || oldTodo[i].completed != newTodos[j].completed) {
-                            updated.push(newTodos[j]);
-                        }
+
+            newTodos.forEach(newTodo => {
+                const oldTodoIndex = oldTodoState.findIndex(oldTodo => oldTodo.id === newTodo.id);
+
+                if (oldTodoIndex === -1) {
+                    added.push(newTodo);
+                } else {
+                    const oldTodo = oldTodoState[oldTodoIndex];
+
+                    if (oldTodo.title !== newTodo.title || oldTodo.description !== newTodo.description || oldTodo.completed !== newTodo.completed) {
+                        updated.push({ oldTodo, newTodo });
                     }
+                    oldTodoState.splice(oldTodoIndex, 1);
                 }
-            }
+            });
 
-            // calculate these 3 arrays
-            // call addTodo, removeTodo, updateTodo functions on each of the
-            // elements
+            deleted.push(...oldTodoState);
 
-            //addTodo:
-            for (let i = 0; i < added.length; i++) {
-                addTodo(added[i]);
-            }
-            //removeTodo:
-            for (let i = 0; i < deleted.length; i++) {
-                removeTodo(deleted[i]);
-            }
+            added.forEach(todo => addTodoElement(todo));
+            deleted.forEach(todo => removeTodoElement(todo));
+            updated.forEach(({ oldTodo, newTodo }) => updateTodoElement(oldTodo, newTodo));
 
-            //updateTodo:
-            for (let i = 0; i < updated.length; i++) {
-                updateTodo(updated[i]);
-            }
-
-            oldTodoState = newTodos;
+            oldTodoState = newTodos.slice();
         }
 
         function addTodo() {
@@ -106,6 +86,7 @@
             todoState.push({
                 title: title,
                 description: description,
+                completed: false,
                 id: globalId++,
             })
             updateState(todoState);
